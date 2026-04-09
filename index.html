@@ -772,7 +772,7 @@ function animateCount(el, target) {
 }
 
 function fetchVisitCount() {
-  fetch('https://api.counterapi.dev/v1/bvunt-site/visits/up')
+  fetch('https://bvunt-counter.ember-sys-root.workers.dev')
     .then(res => res.json())
     .then(data => {
       const numEl = document.getElementById('views-num');
