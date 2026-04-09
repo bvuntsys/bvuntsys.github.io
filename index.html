@@ -40,12 +40,10 @@ body {
   perspective: 1200px;
 }
 
-/* Desktop gets custom cursor; mobile does not */
 body.is-desktop,
 body.is-desktop a,
 body.is-desktop button { cursor: none !important; }
 
-/* RAIN CANVAS */
 #rain-canvas {
   position: fixed;
   top: 0; left: 0;
@@ -60,7 +58,6 @@ body.is-desktop button { cursor: none !important; }
 .orb2 { width: 500px; height: 500px; bottom: -150px; right: -150px; background: radial-gradient(circle, #e040a030 0%, transparent 65%); }
 .orb3 { width: 300px; height: 300px; top: 40%; left: 60%; background: radial-gradient(circle, #ffb3d915 0%, transparent 70%); }
 
-/* ENTER SCREEN */
 #enter-screen {
   position: fixed; inset: 0; z-index: 100;
   background: #0d080f;
@@ -110,7 +107,6 @@ body.is-desktop button { cursor: none !important; }
 }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-/* 3D WRAPPER */
 #tilt-wrapper {
   position: relative; z-index: 1;
   width: 100%; max-width: 600px;
@@ -125,12 +121,11 @@ body.is-desktop button { cursor: none !important; }
 }
 #tilt-wrapper.tilting { transition: transform 0.08s linear; }
 
-/* CARD */
 .card {
   background: linear-gradient(160deg, #1a0d1e 0%, #130d16 50%, #160a18 100%);
   border: 1px solid #ff6eb420;
   border-radius: 24px;
-  padding: 2.4rem 2.6rem;
+  padding: 2.4rem 2.6rem 3rem;
   text-align: center;
   position: relative;
   transform-style: preserve-3d;
@@ -171,7 +166,6 @@ body.is-desktop button { cursor: none !important; }
   .icon-btn { width: 44px; height: 44px; }
 }
 
-/* DESKTOP FIT — scale card down so it never overflows viewport */
 @media (min-width: 481px) and (max-height: 780px) {
   .card { padding: 1.6rem 2rem; }
   .avatar { width: 72px; height: 72px; }
@@ -221,7 +215,6 @@ body.is-desktop button { cursor: none !important; }
 .card-depth  { position: absolute; inset: 0; border-radius: 24px; transform: translateZ(-8px) scale(1.02); border: 1px solid #ff6eb418; pointer-events: none; }
 .card-depth2 { position: absolute; inset: 0; border-radius: 24px; transform: translateZ(-16px) scale(1.04); border: 1px solid #e040a010; pointer-events: none; }
 
-/* VOLUME CONTROL */
 .volume-ctrl {
   position: fixed;
   top: 20px; right: 24px;
@@ -267,7 +260,6 @@ body.is-desktop button { cursor: none !important; }
   box-shadow: 0 0 6px #ff6eb470;
 }
 
-/* AVATAR */
 .avatar-wrap { position: relative; display: inline-block; margin-bottom: 1.1rem; transform: translateZ(20px); }
 .avatar {
   width: 88px; height: 88px; border-radius: 50%;
@@ -336,7 +328,6 @@ body.is-desktop button { cursor: none !important; }
 
 .divider { height: 1px; background: linear-gradient(90deg, transparent, #ff6eb425, transparent); margin: 1rem 0; }
 
-/* SPOTIFY BAR */
 .spotify-bar {
   background: #0d0810; border: 1px solid #ff6eb430;
   border-radius: 14px; padding: 12px 14px; margin-bottom: 1rem;
@@ -407,7 +398,6 @@ body.is-desktop button { cursor: none !important; }
 .sp-progress.dragging .sp-thumb { transform: translateY(-50%) scale(1); }
 .sp-progress.dragging .sp-fill  { transition: none; }
 
-/* PLAYER CONTROLS — SVG icons, consistent cross-platform */
 .sp-controls { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 
 .sp-btn {
@@ -435,7 +425,6 @@ body.is-desktop button { cursor: none !important; }
   transform: scale(1.1);
 }
 
-/* SOCIAL ICONS */
 .links {
   display: flex; flex-direction: row;
   justify-content: center; align-items: center;
@@ -461,7 +450,6 @@ body.is-desktop button { cursor: none !important; }
   transform: translateY(-3px) scale(1.08); box-shadow: 0 6px 22px #ff6eb425;
 }
 
-/* Tooltip — desktop only */
 #floating-tip {
   position: fixed;
   background: #1c0f1e; border: 1px solid #ff6eb430;
@@ -475,9 +463,78 @@ body.is-desktop button { cursor: none !important; }
   transform: translateX(-50%);
 }
 
-.views { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--muted); margin-top: 1.2rem; opacity: 0.4; }
+.views {
+  position: absolute;
+  bottom: 14px;
+  right: 16px;
+}
 
-/* DESKTOP CURSOR */
+.views-bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: linear-gradient(135deg, #ff6eb412, #e040a008);
+  border: 1px solid #ff6eb435;
+  border-radius: 99px;
+  padding: 5px 13px 5px 9px;
+  opacity: 0;
+  transform: translateY(6px) scale(0.94);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 14px #ff6eb410, inset 0 1px 0 #ff6eb418;
+  position: relative;
+  overflow: hidden;
+}
+
+.views-bubble::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, #ff6eb408 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s ease infinite;
+  border-radius: 99px;
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.views-bubble.loaded {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.views-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #ff6eb4;
+  box-shadow: 0 0 6px #ff6eb490;
+  animation: spdot 2s ease infinite;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.views-count-num {
+  font-family: 'DM Mono', monospace;
+  font-weight: 500;
+  font-size: 0.72rem;
+  color: #ffb3d9;
+  letter-spacing: 0.06em;
+  position: relative;
+  z-index: 1;
+}
+
+.views-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  color: #ff6eb490;
+  letter-spacing: 0.04em;
+  position: relative;
+  z-index: 1;
+}
+
+
 #cursor-dot, #cursor-ring { display: none; }
 body.is-desktop #cursor-dot,
 body.is-desktop #cursor-ring { display: block; }
@@ -518,8 +575,6 @@ body.is-desktop .trail-dot { display: block; }
   0%   { opacity: 1; transform: translate(0,0) scale(1); }
   100% { opacity: 0; transform: var(--tx) scale(0); }
 }
-
-
 </style>
 </head>
 <body>
@@ -597,20 +652,16 @@ body.is-desktop .trail-dot { display: block; }
       </div>
 
       <div class="sp-controls">
-        <!-- Prev: skip-back icon -->
         <button class="sp-btn" id="sp-prev" aria-label="Previous">
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/>
           </svg>
         </button>
-        <!-- Play/Pause -->
         <button class="sp-btn play" id="sp-play" aria-label="Play/Pause">
-          <!-- icon swapped by JS -->
           <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor">
             <path d="M8 5v14l11-7z"/>
           </svg>
         </button>
-        <!-- Next: skip-forward icon -->
         <button class="sp-btn" id="sp-next" aria-label="Next">
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
@@ -621,16 +672,22 @@ body.is-desktop .trail-dot { display: block; }
 
     <div class="links">
       <a class="icon-btn" href="https://discord.com/users/717700366501806130b" target="_blank">
-<span class="tip">Discord</span>
-<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.003.025.015.05.031.066a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
-</a>
-<a class="icon-btn" href="https://github.com/bvuntsys" target="_blank">
-<span class="tip">GitHub</span>
-<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-</a>
+        <span class="tip">Discord</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.003.025.015.05.031.066a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+      </a>
+      <a class="icon-btn" href="https://github.com/bvuntsys" target="_blank">
+        <span class="tip">GitHub</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      </a>
     </div>
 
-    <p class="views">✦ bvunt.site</p>
+    <div class="views">
+      <div class="views-bubble" id="views-count">
+        <span class="views-dot"></span>
+        <span class="views-count-num" id="views-num">—</span>
+        <span class="views-label">visits</span>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -697,6 +754,39 @@ document.body.classList.add(isMobile ? 'is-mobile' : 'is-desktop');
   }
   drawRain();
 })();
+
+function animateCount(el, target) {
+  const duration = 1200;
+  const start = performance.now();
+  const startVal = 0;
+  function step(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    const current = Math.round(startVal + (target - startVal) * ease);
+    el.textContent = current.toLocaleString();
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = target.toLocaleString();
+  }
+  requestAnimationFrame(step);
+}
+
+function fetchVisitCount() {
+  fetch('https://api.counterapi.dev/v1/bvunt-site/visits/up')
+    .then(res => res.json())
+    .then(data => {
+      const numEl = document.getElementById('views-num');
+      const countEl = document.getElementById('views-count');
+      animateCount(numEl, data.count);
+      countEl.classList.add('loaded');
+    })
+    .catch(() => {
+      const numEl = document.getElementById('views-num');
+      const countEl = document.getElementById('views-count');
+      numEl.textContent = '—';
+      countEl.classList.add('loaded');
+    });
+}
 
 const TRACKS = [
   { title: "fukk rapping bru", artist: "*67", src: "assets/songs/song1.mp3", img: "assets/covers/song1.jpg", emoji: "🎵" },
@@ -880,6 +970,7 @@ document.getElementById('enter-btn').addEventListener('click', () => {
     setTimeout(typeIn, 700);
     audio.play().catch(() => {});
     setPlaying(true);
+    fetchVisitCount();
   }, 800);
 });
 
