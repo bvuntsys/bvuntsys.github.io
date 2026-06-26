@@ -1,16 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8"/>
-<head>
-  <link rel="icon" type="image/png" href="assets/icons/cat.png">
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="assets/icons/cat.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>bvunt.site</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 </head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>bvunt.site</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<video id="bg-video" autoplay muted loop playsinline>
-  <source src="assets/wallpaper/HoneyWork.mp4" type="video/mp4">
-</video>
+<body>
+    <video
+        id="bg-video"
+        autoplay
+        muted
+        loop
+        playsinline
+        webkit-playsinline
+        preload="auto"
+        disablePictureInPicture
+        poster="assets/wallpaper/fallback.jpg">
+        <source src="assets/wallpaper/HoneyWork.mp4" type="video/mp4">
+    </video>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 #bg-video {
@@ -21,6 +33,17 @@
   object-fit: cover;
   z-index: -3;
   pointer-events: none;
+}
+
+body.video-failed::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -4;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 20%, #5a1e3a, transparent),
+    radial-gradient(ellipse 70% 80% at 80% 80%, #1a2a4a, transparent),
+    linear-gradient(160deg, #3a1d2e 0%, #1a0f1e 100%);
 }
 
 :root {
@@ -786,6 +809,72 @@ const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/
   || ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 document.body.classList.add(isMobile ? 'is-mobile' : 'is-desktop');
 
+(function () {
+  const vid = document.getElementById('bg-video');
+  let hasPlayed = false;
+  let failCount = 0;
+
+  vid.muted = true;
+  vid.setAttribute('muted', '');
+  vid.setAttribute('playsinline', '');
+  vid.setAttribute('webkit-playsinline', '');
+
+  function tryPlay() {
+    if (hasPlayed) return;
+    const p = vid.play();
+    if (p !== undefined) {
+      p.then(() => { hasPlayed = true; })
+       .catch(() => {
+       });
+    }
+  }
+
+  vid.addEventListener('canplay', tryPlay, { once: true });
+
+  vid.addEventListener('loadeddata', tryPlay, { once: true });
+
+  setTimeout(tryPlay, 2000);
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && !vid.paused) return;
+    if (document.visibilityState === 'visible') tryPlay();
+  });
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) tryPlay();
+    }, { threshold: 0.1 }).observe(vid);
+  }
+
+  window._ensureVideoPlay = function () {
+    vid.muted = true;
+    if (vid.paused) {
+      vid.play().then(() => { hasPlayed = true; }).catch(() => {});
+    }
+  };
+
+  vid.addEventListener('error', () => {
+    failCount++;
+    if (failCount >= 2) document.body.classList.add('video-failed');
+  });
+
+  let stallTimer = null;
+  vid.addEventListener('stalled', () => {
+    stallTimer = setTimeout(() => {
+      const t = vid.currentTime;
+      vid.load();
+      vid.currentTime = t;
+      tryPlay();
+    }, 4000);
+  });
+  vid.addEventListener('playing', () => {
+    hasPlayed = true;
+    if (stallTimer) { clearTimeout(stallTimer); stallTimer = null; }
+  });
+
+  vid.load();
+})();
+
 (function() {
   const canvas = document.getElementById('rain-canvas');
   const ctx = canvas.getContext('2d');
@@ -906,11 +995,9 @@ const volIcon = document.getElementById('vol-icon');
 
 volIcon.addEventListener('click', (e) => {
   e.stopPropagation();
-
   volIcon.classList.remove('pop');
   void volIcon.offsetWidth;
   volIcon.classList.add('pop');
-
   audio.muted = !audio.muted;
   if (audio.muted) {
     lastVolume = audio.volume || lastVolume;
@@ -922,27 +1009,22 @@ volIcon.addEventListener('click', (e) => {
     updateVolIcon(lastVolume);
   }
 });
+
 volSlider.addEventListener('input', () => {
   const v = volSlider.value / 100;
-
   audio.volume = v;
   audio.muted = v === 0;
-
   volSlider.style.setProperty('--val', volSlider.value + '%');
   updateVolIcon(v);
-
   if (v > 0) lastVolume = v;
 });
 
 let lastVolume = audio.volume;
 
 const volCtrl = document.getElementById('volume-ctrl');
-
 volCtrl.addEventListener('click', (e) => {
   if (e.target.id === 'vol-slider') return;
-
   audio.muted = !audio.muted;
-
   if (audio.muted) {
     lastVolume = audio.volume;
     updateVolIcon(0);
@@ -1072,6 +1154,8 @@ function randomJoinedText() {
 setInterval(() => { joinedEl.textContent = randomJoinedText(); }, 60);
 
 enterScreen.addEventListener('click', () => {
+  window._ensureVideoPlay && window._ensureVideoPlay();
+
   enterScreen.classList.add('hidden');
   setTimeout(() => {
     enterScreen.style.display = 'none';
@@ -1111,14 +1195,8 @@ function tiltLoop() {
   }
 }
 
-function startTiltLoop() {
-  if (!tiltRAF) tiltRAF = requestAnimationFrame(tiltLoop);
-}
-
-function resetTilt() {
-  targetRX = 0; targetRY = 0;
-  startTiltLoop();
-}
+function startTiltLoop() { if (!tiltRAF) tiltRAF = requestAnimationFrame(tiltLoop); }
+function resetTilt() { targetRX = 0; targetRY = 0; startTiltLoop(); }
 
 if (!isMobile) {
   wrapper.addEventListener('mouseenter', () => { isHovering = true; startTiltLoop(); });
@@ -1217,16 +1295,13 @@ if (!isMobile) {
 
 if (isMobile) {
   const iconBtns = document.querySelectorAll('.icon-btn');
-
   document.addEventListener('touchmove', (e) => {
     const touch = e.touches[0];
     const el = document.elementFromPoint(touch.clientX, touch.clientY);
     const btn = el?.closest('.icon-btn');
-
     iconBtns.forEach(b => b.classList.remove('touch-hover'));
     if (btn) btn.classList.add('touch-hover');
   }, { passive: true });
-
   document.addEventListener('touchend', () => {
     iconBtns.forEach(b => b.classList.remove('touch-hover'));
   }, { passive: true });
